@@ -16,8 +16,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createAccount, handleError } from '@/lib/actions/user.actions';
+import { createAccount, handleError, login } from '@/lib/actions/user.actions';
 import OTPModal from './OTPModal';
+import { toast } from 'react-hot-toast';
 
 type FormType = "sign-in" | "sign-up";
 const authFormSchema = (formType: FormType) => {
@@ -33,8 +34,7 @@ const authFormSchema = (formType: FormType) => {
 const AuthForm = ({ type }: { type: FormType }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [accountId, setAccountId] = useState(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const [accountId, setAccountId] = useState<string | null>(null);
 
   const formSchema = authFormSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -45,7 +45,10 @@ const AuthForm = ({ type }: { type: FormType }) => {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+
+
+
+  async function onSubmitRegister(values: z.infer<typeof formSchema>) {
     console.log(values);
     setIsLoading(true);
 
@@ -53,7 +56,8 @@ const AuthForm = ({ type }: { type: FormType }) => {
       const user = await createAccount({ fullName: values.fullName || '', email: values.email });
       console.log(user);
       setAccountId(user.accountId);
-      setIsOpen(true)
+      // setIsOpen(true)
+      toast.success('Email sent successfully');
     } catch (error) {
       handleError(error, "failed to create account");
       setErrorMessage(String(error));
@@ -62,10 +66,32 @@ const AuthForm = ({ type }: { type: FormType }) => {
     }
   }
 
+
+  const onSubmitLogin = async (values: z.infer<typeof formSchema>) => {
+    setIsLoading(true);
+
+    try {
+      const user = await login({ email: values.email });
+      setAccountId(user.accountId);
+      console.log(accountId);
+      if(accountId) {
+          toast.success('Email sent successfully');
+      }
+    
+
+    } catch (error) {
+      toast.error('failed to login');
+      handleError(error, "failed to login");
+
+    } finally {
+      setIsLoading(false);
+    }
+
+  }
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 auth-form">
+        <form onSubmit={form.handleSubmit(type === "sign-up" ? onSubmitRegister : onSubmitLogin)} className="space-y-8 auth-form">
           <h1 className='h1'>{type === "sign-in" ? "Sign In" : "Sign Up"}</h1>
           {type === "sign-up" && (
             <FormField

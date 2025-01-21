@@ -1,7 +1,9 @@
 import React from 'react'
 import Image from 'next/image';
 
-const AuthLayout = ({ children }: { children: React.ReactNode }) => {
+
+const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
+   
     return (
         <div className='flex  min-h-screen'>
             <section className="hidden w-1/2 items-center justify-center bg-brand p-10 lg:flex xl:w-2/5">

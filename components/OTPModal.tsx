@@ -1,4 +1,5 @@
 
+"use client";
 import React, { useState } from 'react'
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -18,6 +19,8 @@ import {
     InputOTPSlot,
 } from "@/components/ui/input-otp"
 import { sendEmailOTP, verifySecret } from '@/lib/actions/user.actions';
+import { toast } from 'react-hot-toast';
+
 
 
 
@@ -28,18 +31,21 @@ const OTPModal = ({ email, accountId }: { email: string; accountId: string }) =>
     const [isLoading, setIsLoading] = useState(false);
     const [password, setPassword] = useState('');
 
+
     const handleSubmit = async (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
 
         try {
             setIsLoading(true);
             console.log(password);
-            const sessionId = await verifySecret({accountId, password});
-            if(sessionId) {
-            router.push('/');
+            const sessionId = await verifySecret({ accountId, password });
+            if (sessionId) {
+                toast.success('Email verified successfully');
+                router.push('/');
             }
         }
         catch (error) {
+            toast.error('failed to verify email');
             console.log('failed to verify email', error)
         }
 
@@ -49,7 +55,8 @@ const OTPModal = ({ email, accountId }: { email: string; accountId: string }) =>
 
     const handleResendOTP = async () => {
 
-        await sendEmailOTP({email});
+        await sendEmailOTP({ email });
+        toast.success('email resent successfully');
 
     }
     return (

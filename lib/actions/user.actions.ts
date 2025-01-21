@@ -8,11 +8,13 @@
 //Verify OTP an authenticate the login.
 "use server";
 
-import { createAdminClient } from "@/lib/appwrite";
+import { createAdminClient, createSessionClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { Query, ID } from "node-appwrite";
 import { parseStringify } from "@/lib/utils";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
 // import { avatarPlaceholderUrl } from "@/constants";
 // import { redirect } from "next/navigation";
 
@@ -28,7 +30,7 @@ const getUserByEmail = async (email: string) => {
   return result.total > 0 ? result.documents[0] : null;
 };
 
-export const handleError =  async (error: unknown, message: string) => {
+export const handleError = async (error: unknown, message: string) => {
   console.log(error, message);
   throw error;
 };
@@ -38,8 +40,8 @@ export const sendEmailOTP = async ({ email }: { email: string }) => {
 
   try {
     const session = await account.createEmailToken(ID.unique(), email);
-
     return session.userId;
+    
   } catch (error) {
     handleError(error, "Failed to send email OTP");
   }
@@ -90,14 +92,72 @@ export const verifySecret = async ({
     const session = await account.createSession(accountId, password);
 
     (await cookies()).set("appwrite-session", session.secret, {
-        path: "/",
-        httpOnly: true,
-        sameSite: "strict",
-        secure: true,
-      });
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+    });
 
     return parseStringify({ sessionId: session.$id });
   } catch (error) {
+  
     handleError(error, "Failed to verify OTP");
+    throw error;
   }
 };
+
+export const login = async ({email}: {email: string}) => {
+  try {
+    const existingUser = await getUserByEmail(email);
+    console.log(existingUser);
+
+    if (existingUser) {
+      const accountId = await sendEmailOTP({ email });
+      if(accountId ===null){
+           throw new Error("failed to send otp") ; };
+
+      return parseStringify({ accountId});
+    }
+   
+      return parseStringify({accountId: null})
+
+    // return parseStringify({accountId: null})
+    
+  } catch (error) {
+    handleError(error, "failed to login");
+    throw error;
+  }
+};
+
+export const getCurrentUser = async () => {
+  const sessionClient = await createSessionClient();
+  if (!sessionClient) return redirect('/sign-in');
+  const {databases, account} = sessionClient;
+  if (!account) return redirect('/sign-in');
+  const result = await account.get();
+  const user = await databases.listDocuments(
+    appwriteConfig.databaseId, appwriteConfig.usersCollectionId, [Query.equal("accountId", result.$id)],
+  );
+
+  if(user.total <=0 )return null;
+
+  return parseStringify(user.documents[0]);
+
+}
+
+export const logout = async () => {
+  const sessionClient = await createSessionClient();
+  if (!sessionClient) return redirect('/sign-in');
+
+  const { account } = await sessionClient;
+
+  try {
+    await account.deleteSession('current');
+    (await cookies()).delete('appwrite-session'); // Correctly close the parentheses here
+    console.log('User logged out successfully');
+     return redirect('/sign-in');
+  } catch (error) {
+    console.error('Error logging out:', error);
+  
+  }
+}
