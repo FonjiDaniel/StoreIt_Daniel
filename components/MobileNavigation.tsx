@@ -29,7 +29,7 @@ interface Props {
   avatar: string;
 }
 
-const MobileNavigation = ({ ownerId, accountId, fullName, email, avatar }: Props) => {
+const MobileNavigation = ({ ownerId, accountId, fullName, email, avatar }: Props)  => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -38,14 +38,15 @@ const MobileNavigation = ({ ownerId, accountId, fullName, email, avatar }: Props
     try {
       await logout();
       router.push('/sign-in');
-      toast.success('Logged out successfully');
-      
+      toast.error("session deleted successfully");
+
     } catch (error) {
       console.error(error);
       toast.error('Failed to logout');
-      
-    }  }
- 
+
+    }
+  }
+
 
   return <header className='mobile-header'>
     <Image src="/assets/icons/logo-full-brand.svg" alt='logo' width={120} height={52} className='h-auto' />
@@ -82,13 +83,13 @@ const MobileNavigation = ({ ownerId, accountId, fullName, email, avatar }: Props
         </nav>
         <Separator className='my-5 bg-ligh-200/20' />
         <div className='flex flex-col justify-between gap-5'>
-          <FileUploader />
+          <FileUploader ownerId={ownerId} accountId={accountId} fullName={fullName} email={email} avatar={avatar} />
 
-          <Button type='submit' className='mobile-sign-out-button' onClick= {submitLogout} >
+          <Button type='submit' className='mobile-sign-out-button' onClick={submitLogout} >
             <Image src="/assets/icons/logout.svg" alt="upload" width={24} height={24} className='w-6' />
             <p>logout</p>
           </Button>
- 
+
         </div>
       </SheetContent>
     </Sheet>

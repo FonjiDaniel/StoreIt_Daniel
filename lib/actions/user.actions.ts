@@ -131,9 +131,9 @@ export const login = async ({email}: {email: string}) => {
 
 export const getCurrentUser = async () => {
   const sessionClient = await createSessionClient();
-  if (!sessionClient) return redirect('/sign-in');
+  if (!sessionClient) return null;
   const {databases, account} = sessionClient;
-  if (!account) return redirect('/sign-in');
+  if (!account) return null;
   const result = await account.get();
   const user = await databases.listDocuments(
     appwriteConfig.databaseId, appwriteConfig.usersCollectionId, [Query.equal("accountId", result.$id)],
@@ -149,7 +149,7 @@ export const logout = async () => {
   const sessionClient = await createSessionClient();
   if (!sessionClient) return redirect('/sign-in');
 
-  const { account } = await sessionClient;
+  const { account } = sessionClient;
 
   try {
     await account.deleteSession('current');

@@ -1,8 +1,14 @@
 import React from 'react'
 import Image from 'next/image';
+import { redirect} from 'next/navigation';
+import { getCurrentUser } from '@/lib/actions/user.actions';
 
 
-const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
+const AuthLayout = async ({ children } : { children: React.ReactNode }) => {
+    const user = await getCurrentUser();
+    if(user){ 
+        redirect('/')  ;
+    }
    
     return (
         <div className='flex  min-h-screen'>
