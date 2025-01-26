@@ -6,15 +6,16 @@ import { getFileType, getFileUrl } from '@/lib/utils';
 import { uploadFile } from '@/lib/actions/file.actions';
 import { appwriteConfig } from '@/lib/appwrite/config';
 import toast from 'react-hot-toast';
+import Thumbnail from './Thumbnail';
 
 
 interface FileUploaderProps {
 
-  ownerId: string;
+  ownerId?: string;
 
-  accountId: string;
+  accountId?: string;
 
-  className? : string
+  className?: string
 
 }
 const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
@@ -23,40 +24,122 @@ const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
 
 
   const [files, setFiles] = React.useState<File[]>([]);
-  const [fileType, setFileType] = React.useState<string>('');
-  const onDrop =  useCallback((acceptedFiles: File[]) => {
+  const [fileType, setFileType] = React.useState<string[]>([]);
+  const [isUploading, setIsUploading] = React.useState<boolean>(false)
+  const onDrop = useCallback((acceptedFiles: File[]) => {
     console.log(acceptedFiles);
-    setFiles(acceptedFiles);
+    setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
     // console.log(files);
-    const fileType = getFileType(acceptedFiles[0].name);
-    setFileType(fileType);
+    const types = acceptedFiles.map((file) => getFileType(file.name))
+    setFileType((prevType) => [...prevType, ...types])
   }, [])
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
+  const { getRootProps, getInputProps } = useDropzone({ onDrop })
 
   const handleFileSubmit = async () => {
     "use client";
-    try{
-      await uploadFile({filePath: files[0]})
-      toast.success("file uploaded");
+    try {
+      // for (const file of files) {
 
-    }catch(error) {
+      //   await uploadFile({ filePath: file })
+      //   toast.success("file uploaded");
+      //   setFiles((prevFiles) => (prevFiles.filter((_, i) => i !== index )))
+      // }
+      setIsUploading(true);
+      const uploadPromises = files.map(async (file, index) => {
+        await uploadFile({
+          filePath: file,
+        });
+
+        // Remove file from state after successful upload
+        setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+        setFileType((prevTypes) => prevTypes.filter((_, i) => i !== index));
+        toast.success(`${file.name} uploaded successfully`);
+      });
+
+      await Promise.all(uploadPromises); // Wait for all files to be uploaded
+
+    } catch (error) {
       console.log(error);
+      setFiles([]);
+      toast.error('failed to upload files')
     }
   }
   return (
     <>
-    <div {...getRootProps()}>
-      <input {...getInputProps()} className='cursor-pointer' />
-      <Button className='uploader-button'>
-        <div className='flex  gap-2 align-items-center justify-content-center'>
-          <Image src="/assets/icons/upload.svg" alt='logo' width={20} height={20}></Image>
-          <p className='h4'>Upload {fileType} </p>
+      <div {...getRootProps()}>
+        <input {...getInputProps()} className='cursor-pointer' />
+        <div className='flex flex-col items-center'>
+          <Button className='uploader-buton'>select a file</Button >
+
+
+          {files.length == 0 && <p className="text-gray-500 text-xs">No files selected</p>}
         </div>
-      </Button>
-    </div>
-    <div>
-      <Button className='uploader-buton' onClick={handleFileSubmit}> upload</Button >
-    </div>
+      </div>
+      <div className="mt-4">
+        {/* {files.length > 0 ? (
+          <ul>
+            {files.map((file, index) => (
+              <li key={index} className="mb-2">
+                {file.type.startsWith('image/') && <Image src={URL.createObjectURL(file)} alt='image' width={30} height={30} className='thumbnail' />}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          null
+        )} */}
+      </div>
+      <div>
+        <Button className='uploader-button' disabled={isUploading || files.length === 0}>
+          <div className='flex  gap-2 align-items-center justify-content-center' onClick={handleFileSubmit}>
+            <Image src="/assets/icons/upload.svg" alt='logo' width={20} height={20}></Image>
+            <p className='h4'>Upload</p>
+          </div>
+        </Button>
+      </div>
+
+      {files.length > 0 && (
+        <ul className="uploader-preview-list">
+          <h4 className="h4 text-light-100">Selected Files</h4>
+
+          {files.map((file, index) => {
+            const type = getFileType(file.name);
+
+            return (
+              <li
+                key={`${file.name}-${index}`}
+                className="uploader-preview-item"
+              >
+                <div className="flex items-center gap-3">
+
+                  <Thumbnail type={type} url={URL.createObjectURL(file)} />
+
+                  <div className=" flex flex-col">
+                    <p className='preview-item-name'>{file.name}</p>
+                    {isUploading && <Image
+                      src="/assets/icons/file-loader.gif"
+                      width={80}
+                      height={26}
+                      alt="Loader"
+                    />
+                    }
+                  </div>
+                </div>
+
+                <Image
+                  src="/assets/icons/remove.svg"
+                  width={24}
+                  height={24}
+                  alt="Remove"
+                  onClick={() => {
+                    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+                    setFileType((prevTypes) => prevTypes.filter((_, i) => i !== index));
+                  }}
+                />
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </>
   )
 }

@@ -57,7 +57,17 @@ const AuthForm = ({ type }: { type: FormType }) => {
       console.log(user);
       setAccountId(user.accountId);
       // setIsOpen(true)
-      toast.success('Email sent successfully');
+      toast.success('email sent.', {
+        style: {
+          border: '1px solid #713200',
+          padding: '16px',
+          color: '#023e8a',
+        },
+        iconTheme: {
+          primary: '#023e8a',
+          secondary: '#FFFAEE',
+        },
+      });
     } catch (error) {
       handleError(error, "failed to create account");
       setErrorMessage(String(error));
@@ -170,7 +180,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
         </form>
 
       </Form>
-      {accountId && <OTPModal email={form.getValues('email')} accountId={accountId || ''} />}
+      {accountId && <OTPModal email={form.getValues('email')} accountId={accountId || ''}  fullName={form.getValues('fullName') || ''}/>}
     </>
   );
 };

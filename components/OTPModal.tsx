@@ -25,7 +25,7 @@ import { toast } from 'react-hot-toast';
 
 
 
-const OTPModal = ({ email, accountId }: { email: string; accountId: string }) => {
+const OTPModal = ({ email, accountId , fullName}: { email: string; accountId: string , fullName: string}) => {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
@@ -38,10 +38,23 @@ const OTPModal = ({ email, accountId }: { email: string; accountId: string }) =>
         try {
             setIsLoading(true);
             console.log(password);
+            console.log(fullName)
             const sessionId = await verifySecret({ accountId, password });
             if (sessionId) {
-                toast.success('Email verified successfully');
-                router.push('/');
+                toast.success("welcome" + "  "  + fullName , {
+                    style: {
+                      border: '1px solid #713200',
+                      padding: '16px',
+                      color: '#023e8a',
+                    },
+                    iconTheme: {
+                      primary: '#9fffcb',
+                      secondary: '#FFFAEE',
+                    },
+                  });
+                 router.push('/');
+                    
+               
             }
         }
         catch (error) {

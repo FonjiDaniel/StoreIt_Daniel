@@ -4,20 +4,7 @@ import { appwriteConfig } from "../appwrite/config";
 import { ID } from "node-appwrite";
 import { convertFileSize, getFileType, getFileUrl } from "../utils";
 import { getCurrentUser } from "./user.actions";
-
-
-interface UploadFileProps {
-    filePath: File;
-    name?: string;
-    url ? : string;
-    type?: string;
-    bucketField?: string
-    accountId?: string;
-    owner?: string;
-    extension?: string;
-    size?: number;
-
-}
+import { UploadFileProps } from "@/constants/types";
 
 export const uploadFile = async ({  
     filePath,
@@ -46,7 +33,7 @@ export const uploadFile = async ({
                 type : getFileType(file.name),
                 bucketField: file.bucketId,
                 accountId: user.accountId,
-                owner: user.fullName,
+                owner: user.$id,
                 extension: file.name.split('.').pop()?.toLocaleLowerCase(),
                 size: file.sizeOriginal,
                 users : []
