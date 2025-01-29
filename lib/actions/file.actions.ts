@@ -1,8 +1,8 @@
 "use server";
 import { createAdminClient, createSessionClient } from "@/lib/appwrite";  
 import { appwriteConfig } from "../appwrite/config";  
-import { ID } from "node-appwrite";
-import { convertFileSize, getFileType, getFileUrl } from "../utils";
+import { ID, Query } from "node-appwrite";
+import { convertFileSize, getFileType, getFileUrl, parseStringify } from "../utils";
 import { getCurrentUser } from "./user.actions";
 import { UploadFileProps } from "@/constants/types";
 
@@ -30,7 +30,7 @@ export const uploadFile = async ({
             const fileDocument = {
                 name: file.name ,
                 url : getFileUrl(file.bucketId, file.$id),
-                type : getFileType(file.name),
+                type : type,
                 bucketField: file.bucketId,
                 accountId: user.accountId,
                 owner: user.$id,
@@ -49,5 +49,21 @@ export const uploadFile = async ({
         }
 
 
+
+    }
+
+
+    export const getFilesByType = async (type : string | string[]) =>{
+        const {databases} = await createAdminClient();
+        try {
+            const allFiles = await databases.listDocuments(
+                appwriteConfig.databaseId, appwriteConfig.filesCollectionId, [Query.equal('type', type)]
+            )
+  return allFiles.documents.length > 0 ? allFiles.documents : [];
+            
+        } catch (error) {
+            
+            console.log(error);
+        }
 
     }

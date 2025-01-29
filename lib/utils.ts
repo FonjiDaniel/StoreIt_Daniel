@@ -64,12 +64,12 @@ export const getFileType = (file: string) => {
   } else if (videoTypes.includes(type!)) {
     return "video";
   } else {
-    return "others";
+    return "other";
   }
 };
 
 export const getFileUrl = (bucketId : string, fileId: string) => {
-  return  `${appwriteConfig.endpointUrl}/storage/buckets/${appwriteConfig.bucketId}/files/${fileId}/view?project=${appwriteConfig.projectId}`;
+  return  `${appwriteConfig.endpointUrl}/storage/${bucketId}/${appwriteConfig.bucketId}/files/${fileId}/view?project=${appwriteConfig.projectId}`;
 }
 
 export const convertFileSize  = ( size : number) => {
@@ -145,3 +145,6 @@ export const getFileIcon = (
       }
   }
 };
+
+
+export const MaxFileSize = 50 * 1000000 //

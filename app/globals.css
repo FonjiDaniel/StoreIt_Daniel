@@ -241,7 +241,7 @@
   }
 
   /* Type page */
-  .page-container {
+  .FPtainer {
     @apply mx-auto flex w-full max-w-7xl flex-col items-center gap-8 !important;
   }
   .total-size-section {
@@ -346,6 +346,8 @@
   }
   .uploader-preview-list {
     @apply fixed bottom-10 right-10 z-50 flex size-full h-fit max-w-[480px] flex-col gap-3 rounded-[20px] bg-white p-7 shadow-drop-3 !important;
+    max-height: 70vh; /* Limit the height to 70% of the viewport */
+    overflow-y: auto; /* Enable vertical scrolling for overflow */
   }
   .uploader-preview-item {
     @apply flex items-center justify-between  gap-3 rounded-xl p-3 shadow-drop-3 !important;

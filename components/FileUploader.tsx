@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Button } from './ui/button'
 import Image from 'next/image'
-import { getFileType, getFileUrl } from '@/lib/utils';
+import { getFileType, getFileUrl, MaxFileSize } from '@/lib/utils';
 import { uploadFile } from '@/lib/actions/file.actions';
 import { appwriteConfig } from '@/lib/appwrite/config';
 import toast from 'react-hot-toast';
@@ -46,22 +46,35 @@ const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
       // }
       setIsUploading(true);
       const uploadPromises = files.map(async (file, index) => {
-        await uploadFile({
-          filePath: file,
-        });
-
-        // Remove file from state after successful upload
-        setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-        setFileType((prevTypes) => prevTypes.filter((_, i) => i !== index));
-        toast.success(`${file.name} uploaded successfully`);
+        if(file.size > MaxFileSize) {
+          setFiles((prevFiles) => prevFiles.filter((_,i) => i !== index))
+          setFileType((prevTypes) => prevTypes.filter((_, i) => i !== index));
+          toast.error(`${file.name} file must be 50mb or lower`);
+          return;
+        } 
+          await uploadFile({
+            filePath: file,
+            type: getFileType(file.name)
+          });
+  
+          // Remove file from state after successful upload
+          setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+          setFileType((prevTypes) => prevTypes.filter((_, i) => i !== index));
+          toast.success(`${file.name} uploaded successfully`);
+    
       });
+       
 
-      await Promise.all(uploadPromises); // Wait for all files to be uploaded
+      await Promise.all(uploadPromises);// Wait for all files to be uploaded
+      
+      setIsUploading(false); 
+      setFileType([]);
+      setFiles([]);
 
     } catch (error) {
       console.log(error);
-      setFiles([]);
       toast.error('failed to upload files')
+      setFiles([]);
     }
   }
   return (
@@ -99,10 +112,24 @@ const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
 
       {files.length > 0 && (
         <ul className="uploader-preview-list">
+          <div className='flex justify-between'>
           <h4 className="h4 text-light-100">Selected Files</h4>
+          <Image
+                  src="/assets/icons/remove.svg"
+                  width={24}
+                  height={24}
+                  alt="Remove"
+                  onClick={() => {
+                    setFiles([]);
+                    setFileType([]);
+                  }}
+                />
+          
+          </div>
 
           {files.map((file, index) => {
             const type = getFileType(file.name);
+            console.log(type);
 
             return (
               <li
