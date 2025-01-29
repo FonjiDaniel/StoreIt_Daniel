@@ -26,7 +26,7 @@ export const createSessionClient = async () =>{
 
 export const createAdminClient = async () =>{
 
-
+ try {
     const client = new Client()
     .setEndpoint(appwriteConfig.endpointUrl)
     .setProject(appwriteConfig.projectId)
@@ -46,5 +46,13 @@ export const createAdminClient = async () =>{
         return new Avatars(client);
     }
  }
+    
+ } catch (error) {
+    console.log(error);
+    throw error
+    
+ }
+    
+ 
     
 }

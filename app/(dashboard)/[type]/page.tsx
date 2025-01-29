@@ -10,11 +10,11 @@ const page = async ({ params }: SearchParamProps) => {
     const type = ((await params)?.type as string);
     console.log(type!);
     const route = (type: string) => {
-        if(type === "documents"){
+        if (type === "documents") {
             return 'document'
-        } else if(type === 'images') {
+        } else if (type === 'images') {
             return "image"
-        } else if(type === 'media') {
+        } else if (type === 'media') {
             return ['audio', 'video']
         } else {
             return 'other'
@@ -25,7 +25,8 @@ const page = async ({ params }: SearchParamProps) => {
     console.log(files!);
     return (
         <div className='page-container'>
-            <section className='w-full'>
+            <section className='w-full' >
+                <div>
                 <h1 className='h1 capitalize'>
                     {type}
                 </h1>
@@ -41,20 +42,22 @@ const page = async ({ params }: SearchParamProps) => {
                             ))}
                         </select>
                     </div>
+                </div>
 
-                    <div>
-                    {files && files.length > 0 ? (
-            files.map((file) => (
-              <Card key={file.$id} {...file} />
-            ))
-          ) : (
-            <p>No {type} found</p>
-          )}
+                <div className='w-full grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4  gap-3 mt-5 '>
+                        {files && files.length > 0 ? (
+                            files.map((file) => (
+                                <Card key={file.$id} {...file} />
+                            ))
+                        ) : (
+                            <p>No {type} found</p>
+                        )}
                     </div>
 
                 </div>
+              
             </section>
-            </div>
+        </div>
     )
 }
 

@@ -72,17 +72,14 @@ export const getFileUrl = (bucketId : string, fileId: string) => {
   return  `${appwriteConfig.endpointUrl}/storage/${bucketId}/${appwriteConfig.bucketId}/files/${fileId}/view?project=${appwriteConfig.projectId}`;
 }
 
-export const convertFileSize  = ( size : number) => {
-
-  if( size <=1000000) { 
-     const finalSize = size/100000+"KB"
-     return  finalSize;
+export const convertFileSize = (size: number): string => {
+  if (size < 1024 * 1024) {
+    return (size / 1024).toFixed(2) + " KB";
   } else {
-    const finalSize = size/1000 + 'MB'
-    return finalSize;
+    return (size / (1024 * 1024)).toFixed(2) + " MB";
   }
+};
 
-}
 
 export const getFileIcon = (
   extension: string | undefined,
