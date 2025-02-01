@@ -12,7 +12,7 @@
 }
 
 export interface SearchParamProps {
-    params?: Promise<SegmentParams>;
+    params?: SegmentParams;
     searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
   }
 
@@ -49,3 +49,52 @@ export interface SearchParamProps {
     $collectionId: string;
   }
   
+
+  export interface File {
+    name: string;
+    url: string;
+    type: string;
+    bucketField: string;
+    accountId: string;
+    extension: string;
+    size: number;
+    users: string[];
+    $id: string;
+    $createdAt: string;
+    $updatedAt: string;
+    $permissions: string[];
+    $databaseId: string;
+    $collectionId: string;
+  }
+
+
+  export interface File {
+    name: string;
+    url: string;
+    type: string;
+    bucketField: string;
+    accountId: string;
+    extension: string;
+    size: number;
+    users: string[];
+    $id: string;
+    $createdAt: string;
+    $updatedAt: string;
+    $permissions: string[];
+    $databaseId: string;
+    $collectionId: string;
+  }
+  
+  export interface User {
+    fullName: string;
+    email: string;
+    avatar: string;
+    accountId: string;
+    $id: string;
+    $createdAt: string;
+    $updatedAt: string;
+    $permissions: string[];
+    files: File[];
+    $databaseId: string;
+    $collectionId: string;
+  }

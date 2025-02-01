@@ -1,37 +1,26 @@
 import React from 'react'
 import Thumbnail from './Thumbnail'
-import { getFileObjectProps } from '@/constants/types'
-import Image from 'next/image'
+// import { getFileObjectProps } from '@/constants/types'
+// import Image from 'next/image'
 import { convertFileSize } from '@/lib/utils'
+import ActionDropdown from './ActionDropdown'
+import { Models } from 'node-appwrite'
 
 const Card = (
 
-    { name,
-        url,
-        type,
-        extension,
-        size,
-        users,
-        $id,
-        $permissions,
-        $createdAt,
-        $updatedAt,
-        owner,
-        $databaseId,
-        $collectionId,
-    }: getFileObjectProps) => {
-    const fileSize = convertFileSize(size);
+    { file} : {file : Models.Document}) => {
+    const fileSize = convertFileSize(file!.size);
 
     return (
         <div className='file-card'>
             <div className='flex justify-between items-center '>
-                <Thumbnail url={url} type={type} extension={extension} />
+                <Thumbnail url={file.url} type={file.type} extension={file.extension} />
                 <div className='flex flex-col'>
-                    <Image src='/assets/icons/dots.svg' alt='options' width={50} height={40} />
-                    <p>{convertFileSize(size)}</p>
+              <  ActionDropdown file={file} />
+                    <p>{fileSize}</p>
                 </div>
             </div>
-            <p>{name}</p>
+            <p>{file.name}</p>
             
         </div>
     )

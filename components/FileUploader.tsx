@@ -2,9 +2,8 @@ import React, { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Button } from './ui/button'
 import Image from 'next/image'
-import { getFileType, getFileUrl, MaxFileSize } from '@/lib/utils';
+import { getFileType, MaxFileSize } from '@/lib/utils';
 import { uploadFile } from '@/lib/actions/file.actions';
-import { appwriteConfig } from '@/lib/appwrite/config';
 import toast from 'react-hot-toast';
 import Thumbnail from './Thumbnail';
 
@@ -26,6 +25,18 @@ const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
   const [files, setFiles] = React.useState<File[]>([]);
   const [fileType, setFileType] = React.useState<string[]>([]);
   const [isUploading, setIsUploading] = React.useState<boolean>(false)
+
+//   const deleteFiles = async () => {
+
+//     try {
+//       await deleteAllFiles(appwriteConfig.bucketId);
+//       toast.success('all files deleted successfully')
+//     } catch (error) {
+//  console.log(error);
+//  toast.error('failed to delete files')
+//     }
+//   }
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
     console.log(acceptedFiles);
     setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
@@ -46,28 +57,28 @@ const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
       // }
       setIsUploading(true);
       const uploadPromises = files.map(async (file, index) => {
-        if(file.size > MaxFileSize) {
-          setFiles((prevFiles) => prevFiles.filter((_,i) => i !== index))
+        if (file.size > MaxFileSize) {
+          setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index))
           setFileType((prevTypes) => prevTypes.filter((_, i) => i !== index));
           toast.error(`${file.name} file must be 50mb or lower`);
           return;
-        } 
-          await uploadFile({
-            filePath: file,
-            type: getFileType(file.name)
-          });
-  
-          // Remove file from state after successful upload
-          setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-          setFileType((prevTypes) => prevTypes.filter((_, i) => i !== index));
-          toast.success(`${file.name} uploaded successfully`);
-    
+        }
+        await uploadFile({
+          filePath: file,
+          type: getFileType(file.name)
+        });
+
+        // Remove file from state after successful upload
+        setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+        setFileType((prevTypes) => prevTypes.filter((_, i) => i !== index));
+        toast.success(`${file.name} uploaded successfully`);
+
       });
-       
+
 
       await Promise.all(uploadPromises);// Wait for all files to be uploaded
-      
-      setIsUploading(false); 
+
+      setIsUploading(false);
       setFileType([]);
       setFiles([]);
 
@@ -77,6 +88,8 @@ const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
       setFiles([]);
     }
   }
+
+
   return (
     <>
       <div {...getRootProps()}>
@@ -101,30 +114,36 @@ const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
           null
         )} */}
       </div>
-      <div>
+      <div className=''>
         <Button className='uploader-button' disabled={isUploading || files.length === 0}>
           <div className='flex  gap-2 align-items-center justify-content-center' onClick={handleFileSubmit}>
             <Image src="/assets/icons/upload.svg" alt='logo' width={20} height={20}></Image>
             <p className='h4'>Upload</p>
           </div>
         </Button>
+        {/* <Button className='uploader-button'>
+          <div className='flex  gap-2 align-items-center justify-content-center' onClick={deleteFiles}>
+            <Image src="/assets/icons/upload.svg" alt='logo' width={20} height={20}></Image>
+            <p className='h4'>deleteAllFiles</p>
+          </div>
+        </Button> */}
       </div>
 
       {files.length > 0 && (
         <ul className="uploader-preview-list">
           <div className='flex justify-between'>
-          <h4 className="h4 text-light-100">Selected Files</h4>
-          <Image
-                  src="/assets/icons/remove.svg"
-                  width={24}
-                  height={24}
-                  alt="Remove"
-                  onClick={() => {
-                    setFiles([]);
-                    setFileType([]);
-                  }}
-                />
-          
+            <h4 className="h4 text-light-100">Selected Files</h4>
+            <Image
+              src="/assets/icons/remove.svg"
+              width={24}
+              height={24}
+              alt="Remove"
+              onClick={() => {
+                setFiles([]);
+                setFileType([]);
+              }}
+            />
+
           </div>
 
           {files.map((file, index) => {

@@ -68,10 +68,15 @@ export const getFileType = (file: string) => {
   }
 };
 
-export const getFileUrl = (bucketId : string, fileId: string) => {
-  return  `${appwriteConfig.endpointUrl}/storage/${bucketId}/${appwriteConfig.bucketId}/files/${fileId}/view?project=${appwriteConfig.projectId}`;
+export const getFileUrl = ( fileId: string) => {
+  return  `${appwriteConfig.endpointUrl}/storage/buckets/${appwriteConfig.bucketId}/files/${fileId}/view?project=${appwriteConfig.projectId}`;
+}
+export const getFileDownloadUrl = ( fileId: string) => {
+  return  `${appwriteConfig.endpointUrl}/storage/buckets/${appwriteConfig.bucketId}/files/${fileId}/download?project=${appwriteConfig.projectId}`;
 }
 
+
+//https://cloud.appwrite.io/v1/storage/buckets/6784d93400157ccd6aee/files/679e946600130388a98c/download?project=678445d80020e9ec4d98&mode=admin
 export const convertFileSize = (size: number): string => {
   if (size < 1024 * 1024) {
     return (size / 1024).toFixed(2) + " KB";

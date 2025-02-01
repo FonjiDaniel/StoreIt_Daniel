@@ -1,13 +1,20 @@
+
+// 'use client'
 import React from 'react'
 import { SearchParamProps } from '@/constants/types';
 import { sortTypes } from '@/constants';
 import { getFilesByType } from '@/lib/actions/file.actions';
 import Card from '@/components/Card';
+import { getCurrentUser } from '@/lib/actions/user.actions';
+import SortDropdown from '@/components/SortDropdown';
+// import { Models } from 'node-appwrite';
 
 
 
-const page = async ({ params }: SearchParamProps) => {
-    const type = ((await params)?.type as string);
+const Page =  async({ params }: SearchParamProps) => {
+
+  
+    const type = params?.type as string;
     console.log(type!);
     const route = (type: string) => {
         if (type === "documents") {
@@ -21,8 +28,24 @@ const page = async ({ params }: SearchParamProps) => {
         }
     }
     const fileQuery = route(type)
+    // const [sortValue, setSortValue] = React.useState()
+    // const [files, setFiles] = React.useState<Models.Document[]>
+
+    // const getFile = async () => {
+    //     const user = await getCurrentUser()
+        
+
+    //     const files = getFilesByType(fileQuery, user.accountId,);
+    // }
+    const user = await getCurrentUser();
+    console.log(user) ;
+
     const files = await getFilesByType(fileQuery);
-    console.log(files!);
+    console.log(files);
+
+
+    // const [sortType, setSortType] = React.useState<string>("$createdAt-desc")
+    // console.log(files!); for debugging
     return (
         <div className='page-container'>
             <section className='w-full' >
@@ -32,22 +55,15 @@ const page = async ({ params }: SearchParamProps) => {
                 </h1>
                 <div className='flex justify-between items-center'>
                     <p>
-                        Total: <span className='font-semibold text-primary'>Size</span>
+                        Total: <span className='font-semibold text-primary'>{files!.length}</span>
                     </p>
-                    <div className='flex  items-center'>
-                        <label htmlFor="sort">Sort By:</label>
-                        <select name="sort" id="sort" className='p-1 rounded-sm'>
-                            {sortTypes.map((sort) => (
-                                <option key={sort.value} value={sort.value} className='bg-white hover:bg-brand'>{sort.label}</option>
-                            ))}
-                        </select>
-                    </div>
+                    <SortDropdown />
                 </div>
 
                 <div className='w-full grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4  gap-3 mt-5 '>
                         {files && files.length > 0 ? (
                             files.map((file) => (
-                                <Card key={file.$id} {...file} />
+                                <Card key={file.$id} file = {file} />
                             ))
                         ) : (
                             <p>No {type} found</p>
@@ -61,4 +77,4 @@ const page = async ({ params }: SearchParamProps) => {
     )
 }
 
-export default page
+export default Page
