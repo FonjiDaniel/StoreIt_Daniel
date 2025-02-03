@@ -1,80 +1,50 @@
+import React from "react";
+import Sort from "@/components/Sort";
+import { getFiles } from "@/lib/actions/file.actions";
+import { Models } from "node-appwrite";
+import Card from "@/components/Card";
+import { getFileTypesParams } from "@/lib/utils";
+import { SearchParamProps, FileType } from "@/constants/types";
 
-// 'use client'
-import React from 'react'
-import { SearchParamProps } from '@/constants/types';
-import { sortTypes } from '@/constants';
-import { getFilesByType } from '@/lib/actions/file.actions';
-import Card from '@/components/Card';
-import { getCurrentUser } from '@/lib/actions/user.actions';
-import SortDropdown from '@/components/SortDropdown';
-// import { Models } from 'node-appwrite';
+const Page = async ({ searchParams, params }: SearchParamProps) => {
+  const type = ((await params)?.type as string) || "";
+  const searchText = ((await searchParams)?.query as string) || "";
+  const sort = ((await searchParams)?.sort as string) || "";
 
+  const types = getFileTypesParams(type) as FileType[];
 
+  const files = await getFiles({ types, searchText, sort });
 
-const Page =  async({ params }: SearchParamProps) => {
+  return (
+    <div className="page-container">
+      <section className="w-full">
+        <h1 className="h1 capitalize">{type}</h1>
 
-  
-    const type = params?.type as string;
-    console.log(type!);
-    const route = (type: string) => {
-        if (type === "documents") {
-            return 'document'
-        } else if (type === 'images') {
-            return "image"
-        } else if (type === 'media') {
-            return ['audio', 'video']
-        } else {
-            return 'other'
-        }
-    }
-    const fileQuery = route(type)
-    // const [sortValue, setSortValue] = React.useState()
-    // const [files, setFiles] = React.useState<Models.Document[]>
+        <div className="total-size-section">
+          <p className="body-1">
+            Total: <span className="h5">0 MB</span>
+          </p>
 
-    // const getFile = async () => {
-    //     const user = await getCurrentUser()
-        
+          <div className="sort-container">
+            <p className="body-1 hidden text-light-200 sm:block">Sort by:</p>
 
-    //     const files = getFilesByType(fileQuery, user.accountId,);
-    // }
-    const user = await getCurrentUser();
-    console.log(user) ;
-
-    const files = await getFilesByType(fileQuery);
-    console.log(files);
-
-
-    // const [sortType, setSortType] = React.useState<string>("$createdAt-desc")
-    // console.log(files!); for debugging
-    return (
-        <div className='page-container'>
-            <section className='w-full' >
-                <div>
-                <h1 className='h1 capitalize'>
-                    {type}
-                </h1>
-                <div className='flex justify-between items-center'>
-                    <p>
-                        Total: <span className='font-semibold text-primary'>{files!.length}</span>
-                    </p>
-                    <SortDropdown />
-                </div>
-
-                <div className='w-full grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4  gap-3 mt-5 '>
-                        {files && files.length > 0 ? (
-                            files.map((file) => (
-                                <Card key={file.$id} file = {file} />
-                            ))
-                        ) : (
-                            <p>No {type} found</p>
-                        )}
-                    </div>
-
-                </div>
-              
-            </section>
+            <Sort />
+          </div>
         </div>
-    )
-}
+      </section>
 
-export default Page
+      {/* Render the files */}
+      {files.total > 0 ? (
+        <section className="file-list">
+          {files.documents.map((file: Models.Document) => (
+            <Card key={file.$id} file={file} />
+          ))}
+        </section>
+      ) : (
+        <p className="empty-list">No files uploaded</p>
+      )}
+    </div>
+  );
+};
+
+export default Page;

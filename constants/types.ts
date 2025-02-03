@@ -98,3 +98,29 @@ export interface SearchParamProps {
     $databaseId: string;
     $collectionId: string;
   }
+
+  export interface RenameFileProps {
+    fileId: string;
+    name: string;
+    extension: string;
+    path: string;
+  }
+  export interface UpdateFileUsersProps {
+    fileId: string;
+    emails: string[];
+    path: string;
+  }
+  export interface DeleteFileProps {
+    fileId: string;
+    bucketFileId: string;
+    path: string;
+  }
+
+  export type FileType = "document" | "image" | "video" | "audio" | "other";
+
+  export interface GetFilesProps {
+    types: FileType[];
+    searchText?: string;
+    sort?: string;
+    limit?: number;
+  }
