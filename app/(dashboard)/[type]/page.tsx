@@ -3,8 +3,8 @@ import Sort from "@/components/Sort";
 import { getFiles } from "@/lib/actions/file.actions";
 import { Models } from "node-appwrite";
 import Card from "@/components/Card";
+import { FileType, SearchParamProps } from "@/constants/types";
 import { getFileTypesParams } from "@/lib/utils";
-import { SearchParamProps, FileType } from "@/constants/types";
 
 const Page = async ({ searchParams, params }: SearchParamProps) => {
   const type = ((await params)?.type as string) || "";

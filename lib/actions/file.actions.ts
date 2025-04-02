@@ -90,8 +90,7 @@ const createQueries = (
   return queries;
 };
 
-
-export const getFiles = async  ({
+export const getFiles = async ({
   types = [],
   searchText = "",
   sort = "$createdAt-desc",
@@ -118,7 +117,6 @@ export const getFiles = async  ({
     handleError(error, "Failed to get files");
   }
 };
-
 
 export const renameFile = async ({
   fileId,

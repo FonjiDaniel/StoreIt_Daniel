@@ -1,7 +1,7 @@
 import { Models } from "node-appwrite";
 import Thumbnail from "@/components/Thumbnail";
 import FormattedDateTime from "@/components/FormattedDate";
-import { convertFileSize, formatDateTime } from "@/lib/utils";
+import { convertFileSize, } from "@/lib/utils";
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,7 @@ export const FileDetails = ({ file }: { file: Models.Document }) => {
         <DetailRow label="Format:" value={file.extension} />
         <DetailRow label="Size:" value={convertFileSize(file.size)} />
         <DetailRow label="Owner:" value={file.owner.fullName} />
-        <DetailRow label="Last edit:" value={formatDateTime(file.$updatedAt)} />
+        <DetailRow label="Last edit:" value={file.$updatedAt} />
       </div>
     </>
   );

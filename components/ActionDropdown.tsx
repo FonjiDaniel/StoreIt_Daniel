@@ -28,11 +28,12 @@ import {
 import { Models } from 'node-appwrite'
 import { actionsDropdownItems } from '@/constants'
 import Link from 'next/link';
-import { getFileDownloadUrl } from '@/lib/utils';
+// import { getFileDownloadUrl } from '@/lib/utils';
 import { Button } from './ui/button';
 import { FileDetails, ShareInput, } from './ActionsModalContent';
 import { Input } from "@/components/ui/input";
 import { deleteFile, renameFile, updateFileUsers } from '@/lib/actions/file.actions';
+import { getFileDownloadUrl } from '@/lib/utils'
 
 
 

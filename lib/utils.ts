@@ -71,12 +71,10 @@ export const getFileType = (file: string) => {
 export const getFileUrl = ( fileId: string) => {
   return  `${appwriteConfig.endpointUrl}/storage/buckets/${appwriteConfig.bucketId}/files/${fileId}/view?project=${appwriteConfig.projectId}`;
 }
-export const getFileDownloadUrl = ( fileId: string) => {
-  return  `${appwriteConfig.endpointUrl}/storage/buckets/${appwriteConfig.bucketId}/files/${fileId}/download?project=${appwriteConfig.projectId}`;
+export const getFileDownloadUrl = (fileId: string) =>{
+  return `${appwriteConfig.endpointUrl}/storage/buckets/${appwriteConfig.bucketId}/files/${fileId}/download?project=${appwriteConfig.projectId}`;
 }
 
-
-//https://cloud.appwrite.io/v1/storage/buckets/6784d93400157ccd6aee/files/679e946600130388a98c/download?project=678445d80020e9ec4d98&mode=admin
 export const convertFileSize = (size: number): string => {
   if (size < 1024 * 1024) {
     return (size / 1024).toFixed(2) + " KB";
@@ -152,42 +150,6 @@ export const getFileIcon = (
 export const MaxFileSize = 50 * 1000000 //
 
 
-
-
-export const formatDateTime = (isoString: string | null | undefined) => {
-  if (!isoString) return "—";
-
-  const date = new Date(isoString);
-
-  // Get hours and adjust for 12-hour format
-  let hours = date.getHours();
-  const minutes = date.getMinutes();
-  const period = hours >= 12 ? "pm" : "am";
-
-  // Convert hours to 12-hour format
-  hours = hours % 12 || 12;
-
-  // Format the time and date parts
-  const time = `${hours}:${minutes.toString().padStart(2, "0")}${period}`;
-  const day = date.getDate();
-  const monthNames = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  const month = monthNames[date.getMonth()];
-
-  return `${time}, ${day} ${month}`;
-};
 
 
 export const getFileTypesParams = (type: string) => {
