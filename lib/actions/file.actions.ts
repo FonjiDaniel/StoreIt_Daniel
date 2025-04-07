@@ -1,27 +1,38 @@
 "use server";
-import { createAdminClient, createSessionClient } from "@/lib/appwrite";
+import { createAdminClient, } from "@/lib/appwrite";
 import { appwriteConfig } from "../appwrite/config";
 import { ID, Models, Query } from "node-appwrite";
 import {
-  convertFileSize,
-  getFileType,
   getFileUrl,
   parseStringify,
 } from "../utils";
 import { getCurrentUser, handleError } from "./user.actions";
-import { UploadFileProps, UpdateFileUsersProps, DeleteFileProps, RenameFileProps, GetFilesProps } from "@/constants/types";
+import {  UpdateFileUsersProps, DeleteFileProps, RenameFileProps, GetFilesProps } from "@/constants/types";
 import { revalidatePath } from "next/cache";
+
+ interface UploadFileProps {
+    filePath: File;
+    // name?: string;
+    // url ? : string;
+    type: string;
+    // bucketField?: string
+    // accountId?: string;
+    // owner?: string;
+    // extension?: string;
+    // size?: number;
+
+}
 
 export const uploadFile = async ({
   filePath,
-  name,
-  url,
+  // name,
+  // url,
   type,
-  bucketField,
-  accountId,
-  owner,
-  extension,
-  size,
+  // bucketField,
+  // accountId,
+  // owner,
+  // extension,
+  // size,
 }: UploadFileProps) => {
   const user = await getCurrentUser();
 

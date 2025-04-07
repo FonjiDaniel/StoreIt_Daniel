@@ -1,19 +1,19 @@
 
  export interface UploadFileProps {
     filePath: File;
-    name?: string;
-    url ? : string;
-    type?: string;
-    bucketField?: string
-    accountId?: string;
-    owner?: string;
-    extension?: string;
-    size?: number;
+    // name?: string;
+    // url ? : string;
+    type: string;
+    // bucketField?: string
+    // accountId?: string;
+    // owner?: string;
+    // extension?: string;
+    // size?: number;
 
 }
 
 export interface SearchParamProps {
-    params?: SegmentParams;
+    params?: Promise<any> | undefined;
     searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
   }
 

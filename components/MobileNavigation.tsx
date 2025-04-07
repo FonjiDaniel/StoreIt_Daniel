@@ -9,7 +9,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import Image from 'next/image'
-import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { Separator } from './ui/separator'
 import { navItems } from '@/constants'
@@ -29,9 +28,8 @@ interface Props {
   avatar: string;
 }
 
-const MobileNavigation = ({ ownerId, accountId, fullName, email, avatar }: Props)  => {
+const MobileNavigation = ({ fullName, email, avatar }: Props)  => {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
   const submitLogout = async () => {
@@ -83,7 +81,7 @@ const MobileNavigation = ({ ownerId, accountId, fullName, email, avatar }: Props
         </nav>
         <Separator className='my-5 bg-ligh-200/20' />
         <div className='flex flex-col justify-between gap-5'>
-          <FileUploader ownerId={ownerId} accountId={accountId}/>
+          <FileUploader />
 
           <Button type='submit' className='mobile-sign-out-button' onClick={submitLogout} >
             <Image src="/assets/icons/logout.svg" alt="upload" width={24} height={24} className='w-6' />

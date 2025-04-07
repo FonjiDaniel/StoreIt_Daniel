@@ -16,7 +16,7 @@ export const Layout =  async ({ children }: { children: React.ReactNode }) => {
     if(!currentUser) return redirect('/sign-in');
     return (
 
-        <main className='flex h-screen'>
+        <main className='flex h-screen text-brand-100'>
             <Sidebar {...currentUser}/>
             <section className='flex h-full flex-1 flex-col'>
                 <MobileNavigation {...currentUser} /> <Header {...currentUser} />

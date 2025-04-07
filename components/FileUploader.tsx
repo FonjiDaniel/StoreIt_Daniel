@@ -8,39 +8,18 @@ import toast from 'react-hot-toast';
 import Thumbnail from './Thumbnail';
 
 
-interface FileUploaderProps {
-
-  ownerId?: string;
-
-  accountId?: string;
-
-  className?: string
-
-}
-const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
+const FileUploader = () => {
 
 
 
 
   const [files, setFiles] = React.useState<File[]>([]);
-  const [fileType, setFileType] = React.useState<string[]>([]);
+  const [, setFileType] = React.useState<string[]>([]);
   const [isUploading, setIsUploading] = React.useState<boolean>(false)
-
-//   const deleteFiles = async () => {
-
-//     try {
-//       await deleteAllFiles(appwriteConfig.bucketId);
-//       toast.success('all files deleted successfully')
-//     } catch (error) {
-//  console.log(error);
-//  toast.error('failed to delete files')
-//     }
-//   }
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     console.log(acceptedFiles);
     setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
-    // console.log(files);
     const types = acceptedFiles.map((file) => getFileType(file.name))
     setFileType((prevType) => [...prevType, ...types])
   }, [])
@@ -49,12 +28,6 @@ const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
   const handleFileSubmit = async () => {
     "use client";
     try {
-      // for (const file of files) {
-
-      //   await uploadFile({ filePath: file })
-      //   toast.success("file uploaded");
-      //   setFiles((prevFiles) => (prevFiles.filter((_, i) => i !== index )))
-      // }
       setIsUploading(true);
       const uploadPromises = files.map(async (file, index) => {
         if (file.size > MaxFileSize) {
@@ -76,7 +49,7 @@ const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
       });
 
 
-      await Promise.all(uploadPromises);// Wait for all files to be uploaded
+      await Promise.all(uploadPromises); // await all uploads to finish
 
       setIsUploading(false);
       setFileType([]);
@@ -102,17 +75,6 @@ const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
         </div>
       </div>
       <div className="mt-4">
-        {/* {files.length > 0 ? (
-          <ul>
-            {files.map((file, index) => (
-              <li key={index} className="mb-2">
-                {file.type.startsWith('image/') && <Image src={URL.createObjectURL(file)} alt='image' width={30} height={30} className='thumbnail' />}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          null
-        )} */}
       </div>
       <div className=''>
         <Button className='uploader-button' disabled={isUploading || files.length === 0}>
@@ -121,12 +83,6 @@ const FileUploader = ({ ownerId, accountId, className }: FileUploaderProps) => {
             <p className='h4'>Upload</p>
           </div>
         </Button>
-        {/* <Button className='uploader-button'>
-          <div className='flex  gap-2 align-items-center justify-content-center' onClick={deleteFiles}>
-            <Image src="/assets/icons/upload.svg" alt='logo' width={20} height={20}></Image>
-            <p className='h4'>deleteAllFiles</p>
-          </div>
-        </Button> */}
       </div>
 
       {files.length > 0 && (
