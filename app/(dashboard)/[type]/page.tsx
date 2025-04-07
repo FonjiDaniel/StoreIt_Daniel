@@ -5,8 +5,15 @@ import { Models } from "node-appwrite";
 import Card from "@/components/Card";
 import { FileType, SearchParamProps } from "@/constants/types";
 import { convertFileSize, getFileTypesParams } from "@/lib/utils";
+import { getCurrentUser } from "@/lib/actions/user.actions";
+import { redirect } from "next/navigation";
 
 const Page = async ({ searchParams, params }: SearchParamProps) => {
+
+
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) return redirect('/sign-in');
   const type = ((await params)?.type as string) || "";
   const searchText = ((await searchParams)?.query as string) || "";
   const sort = ((await searchParams)?.sort as string) || "";
@@ -15,7 +22,7 @@ const Page = async ({ searchParams, params }: SearchParamProps) => {
 
   const files = await getFiles({ types, searchText, sort });
 
-  const totalSize = files.documents.reduce((acc : number, file: Models.Document) => acc + file.size, 0);
+  const totalSize = files.documents.reduce((acc: number, file: Models.Document) => acc + file.size, 0);
   const convertedSize = convertFileSize(totalSize);
   return (
     <div className="page-container">
@@ -35,7 +42,7 @@ const Page = async ({ searchParams, params }: SearchParamProps) => {
         </div>
       </section>
 
-    
+
       {files.total > 0 ? (
         <section className="file-list">
           {files.documents.map((file: Models.Document) => (
